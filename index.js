@@ -30,12 +30,18 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const bookCollection = client.db("bookDB").collection("book");
+    const bookCollection = client.db("bookDB").collection("books");
 
+    // save book into db
     app.post("/book", async (req, res) => {
       const body = req.body;
       console.log(body);
       const result = await bookCollection.insertOne(body);
+      res.send(result);
+    });
+    // get All data from bd
+    app.get("/books", async (req, res) => {
+      const result = await bookCollection.find().toArray();
       res.send(result);
     });
 
