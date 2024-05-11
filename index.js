@@ -6,7 +6,12 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // middlewere
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dbn21dt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -24,6 +29,15 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const bookCollection = client.db("bookDB").collection("book");
+
+    app.post("/book", async (req, res) => {
+      const body = req.body;
+      console.log(body);
+      const result = await bookCollection.insertOne(body);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
