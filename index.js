@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
@@ -42,6 +42,26 @@ async function run() {
     // get All data from bd
     app.get("/books", async (req, res) => {
       const result = await bookCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/books/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await bookCollection.findOne(query);
+      res.send(result);
+    });
+
+    // update book in database
+    app.put("/books/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateBook = req.body;
+      const book = {
+        $set: { ...updateBook },
+      };
+      const result = await bookCollection.updateOne(query, book, options);
       res.send(result);
     });
 
