@@ -88,12 +88,25 @@ async function run() {
       const result = await subBookCollection.deleteOne(query);
       res.send(result);
     });
+    // save book into db
+    app.post("/subBooks", async (req, res) => {
+      const body = req.body;
+      console.log(body);
+      const result = await subBookCollection.insertOne(body);
+      res.send(result);
+    });
 
     // save borrowed into db
     app.post("/borrowed", async (req, res) => {
       const body = req.body;
       console.log(body);
       const result = await borrowedBookCollection.insertOne(body);
+      res.send(result);
+    });
+
+    // get All data from borrowed collection
+    app.get("/borrowedBook", async (req, res) => {
+      const result = await borrowedBookCollection.find().toArray();
       res.send(result);
     });
 
