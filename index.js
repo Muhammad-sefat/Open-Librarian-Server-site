@@ -31,6 +31,7 @@ async function run() {
     // await client.connect();
 
     const bookCollection = client.db("bookDB").collection("books");
+    const subBookCollection = client.db("bookDB").collection("subBooks");
 
     // save book into db
     app.post("/book", async (req, res) => {
@@ -62,6 +63,11 @@ async function run() {
         $set: { ...updateBook },
       };
       const result = await bookCollection.updateOne(query, book, options);
+      res.send(result);
+    });
+    // get All data from subBooks collection
+    app.get("/subBooks", async (req, res) => {
+      const result = await subBookCollection.find().toArray();
       res.send(result);
     });
 
