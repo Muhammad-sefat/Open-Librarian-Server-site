@@ -32,6 +32,7 @@ async function run() {
 
     const bookCollection = client.db("bookDB").collection("books");
     const subBookCollection = client.db("bookDB").collection("subBooks");
+    const borrowedBookCollection = client.db("bookDB").collection("borrowed");
 
     // save book into db
     app.post("/book", async (req, res) => {
@@ -77,6 +78,22 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await subBookCollection.findOne(query);
+      res.send(result);
+    });
+
+    // delete book from subBooks section
+    app.delete("/subBooks/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await subBookCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // save borrowed into db
+    app.post("/borrowed", async (req, res) => {
+      const body = req.body;
+      console.log(body);
+      const result = await borrowedBookCollection.insertOne(body);
       res.send(result);
     });
 
