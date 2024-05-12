@@ -65,9 +65,18 @@ async function run() {
       const result = await bookCollection.updateOne(query, book, options);
       res.send(result);
     });
+
     // get All data from subBooks collection
     app.get("/subBooks", async (req, res) => {
       const result = await subBookCollection.find().toArray();
+      res.send(result);
+    });
+
+    // find single data by id in subBookCollection
+    app.get("/subBooks/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await subBookCollection.findOne(query);
       res.send(result);
     });
 
