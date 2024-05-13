@@ -105,8 +105,11 @@ async function run() {
     });
 
     // get All data from borrowed collection
-    app.get("/borrowedBook", async (req, res) => {
-      const result = await borrowedBookCollection.find().toArray();
+    app.get("/borrowedBook/:email", async (req, res) => {
+      const emails = req.params.email;
+      const result = await borrowedBookCollection
+        .find({ email: emails })
+        .toArray();
       res.send(result);
     });
 
