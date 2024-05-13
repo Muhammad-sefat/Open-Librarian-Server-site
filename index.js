@@ -74,15 +74,14 @@ async function run() {
     });
 
     // find single data by id in subBookCollection
-    app.get("/subBooks/:id", async (req, res) => {
+    app.get("/sub-Books/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await subBookCollection.findOne(query);
       res.send(result);
     });
-
     // delete book from subBooks section
-    app.delete("/subBooks/:id", async (req, res) => {
+    app.delete("/subBookss/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await subBookCollection.deleteOne(query);
@@ -90,7 +89,7 @@ async function run() {
     });
 
     // save book into db
-    app.post("/subBooks", async (req, res) => {
+    app.post("/sub_Books", async (req, res) => {
       const body = req.body;
       console.log(body);
       const result = await subBookCollection.insertOne(body);
@@ -112,7 +111,7 @@ async function run() {
     });
 
     // delete book from Borrowed section
-    app.delete("/borrowed/:id", async (req, res) => {
+    app.delete("/borrowedd/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await borrowedBookCollection.deleteOne(query);
