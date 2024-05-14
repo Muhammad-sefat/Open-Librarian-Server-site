@@ -10,7 +10,10 @@ const port = process.env.PORT || 5000;
 // middlewere
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "https://open-librarian.web.app",
+      "https://open-librarian.firebaseapp.com",
+    ],
     credentials: true,
   })
 );
