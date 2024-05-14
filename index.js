@@ -27,7 +27,6 @@ const verifyToken = (req, res, next) => {
         console.log(error);
         return res.status(401).send({ message: "unauthorized access" });
       }
-
       req.user = decoded;
       next();
     });
@@ -54,10 +53,40 @@ async function run() {
     const subBookCollection = client.db("bookDB").collection("subBooks");
     const borrowedBookCollection = client.db("bookDB").collection("borrowed");
 
+    // create jwt token
+    app.post("/jwt", async (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "7d",
+      });
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+        })
+        .send({ success: true });
+    });
+
+    // delete jwt token
+    app.get("/logout", (req, res) => {
+      res
+        .clearCookie("token", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+          maxAge: 0,
+        })
+        .send({ success: true });
+    });
+
     // save book into db
-    app.post("/book", async (req, res) => {
+    app.post("/book", verifyToken, async (req, res) => {
       const body = req.body;
-      console.log(body);
+      const tokenEmail = req.user?.email;
+      if (tokenEmail !== body.email) {
+        return res.status(403).send({ message: "Forbidden access" });
+      }
       const result = await bookCollection.insertOne(body);
       res.send(result);
     });
@@ -75,11 +104,15 @@ async function run() {
     });
 
     // update book in database by ID
-    app.put("/books/:id", async (req, res) => {
+    app.put("/books/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updateBook = req.body;
+      const tokenEmail = req.user?.email;
+      if (tokenEmail !== updateBook.email) {
+        return res.status(403).send({ message: "Forbidden access" });
+      }
       const book = {
         $set: { ...updateBook },
       };
