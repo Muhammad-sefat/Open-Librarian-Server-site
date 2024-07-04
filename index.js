@@ -154,9 +154,17 @@ async function run() {
 
     // save borrowed into db
     app.post("/borrowed", async (req, res) => {
-      const body = req.body;
-      console.log(body);
-      const result = await borrowedBookCollection.insertOne(body);
+      const bodyData = req.body;
+      const query = {
+        jobId: bodyData.jobId,
+      };
+      console.log(query);
+      const alredyApplied = await borrowedBookCollection.findOne(query);
+      if (alredyApplied) {
+        return res.status(400).send(" You have already Borrowed This Book ");
+      }
+      console.log(bodyData);
+      const result = await borrowedBookCollection.insertOne(bodyData);
       res.send(result);
     });
 
