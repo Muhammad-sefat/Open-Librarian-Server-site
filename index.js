@@ -8,15 +8,18 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // middlewere
-app.use(
-  cors({
-    origin: [
-      "https://open-librarian.web.app",
-      "https://open-librarian.firebaseapp.com",
-    ],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: [
+    "https://open-librarian.firebaseapp.com",
+    "https://open-librarian.web.app",
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
